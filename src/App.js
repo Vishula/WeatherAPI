@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import coldbg from "./assets/coldbg.jpg"
 import Descriptions from "./components/Descriptions";
+import { getWeatherData } from "./weatherAPI";
 
 //  import hotBg from "../assets/hotbg.jpg"
 //  import cloudyBg from "../assets/cloudyBg.jpb"
@@ -8,33 +10,63 @@ import Descriptions from "./components/Descriptions";
 
 
 function App() {
-  return (
+
+  // states
+  const [weather, setWeather] = useState(null)
+  const [units, setUnits] = useState("metric")
+
+
+  // use effect to auto import 
+  useEffect(() => {
+
+    const fetchWeatherinfo = async () => {
+      const data = await getWeatherData('cairns', units)
+
+      setWeather(data)
+      console.log(data);
+
+
+    }
+    fetchWeatherinfo()
+
+  }, []);
+
+
+
+
+
+  return ( // background
     <div className="app" style={{ backgroundImage: `url(${coldbg})` }}>
       <div className="overlay">
-        <div className="container">
-          <div className="section">
 
-            <div className="section section_inputs">
-              <input type="text" name="city" placeholder="Enter city name :" />
-              <button>°F</button> 
+        { // only container comes visible when weather is fetched
+          weather && <div className="container">
+            <div className="section">
 
-            </div>
-            <div className="section section_temp" >
+              <div className="section section_inputs">
+                <input type="text" name="city" placeholder="Enter city name :" />
+                <button>°F</button>
 
-              <div className="icon">
-                <h3>London GB</h3>
-                <img src="https://www.nicepng.com/png/detail/15-155040_weather-icon-weather.png" alt="weather icon" style={{ width: "100px", height: "50px" }} />
-                <h3>Cloudy</h3>
               </div>
+              <div className="section section_temp" >
 
-              <div className="temp">
-                <h1>34 °C</h1>
+                <div className="icon">
+                  <h3>{`${weather.name}, ${weather.country}`}</h3>
+                  <img src={weather.iconURL} alt="weather icon" style={{ width: "100px", height: "100px" }} />
+                  <h3>{weather.description}</h3>
+                </div>
+
+                <div className="temp">
+
+                  <h1>{`${weather.temp.toFixed()} ${units === "metric" ? "C" : "F"}`}</h1>
+                </div>
               </div>
             </div>
+            <Descriptions weather={weather} units={units}/>
+
           </div>
-          <Descriptions />
+        }
 
-        </div>
       </div>
     </div>
   );
@@ -45,7 +77,7 @@ export default App;
 
 
 
-
+ 
 
 
 
