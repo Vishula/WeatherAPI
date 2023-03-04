@@ -16,33 +16,33 @@ import { getWeatherData } from "./weatherAPI"; // function to fetch weather data
 function App() {
 
   // states
-  const [city, setCity] = useState("Paris")
-  const [weather, setWeather] = useState(null)
-  const [units, setUnits] = useState("metric")
-  const [bg, setBg] = useState(hotbg)
+  const [city, setCity] = useState("Paris") // initial city when loading page
+  const [weather, setWeather] = useState(null) // variable with the current weather data
+  const [units, setUnits] = useState("metric") // units to display temprature 
+  const [bg, setBg] = useState(hotbg) // bg - current background image displaying  
   // Create a new state variable to keep track of the current page.
-  const [currentPage, setCurrentPage] = useState("weather");
+  const [currentPage, setCurrentPage] = useState("weather"); // currentPage variable - name of the currently displaying page
 
 
   // use effect to auto import 
-  useEffect(() => {
+  useEffect(() => { // runs a function whenever the component given or the (units, city) change
 
-    const fetchWeatherinfo = async () => {
-      const data = await getWeatherData(city, units)
+    const fetchWeatherinfo = async () => { //async function that will fetch weather data
+      const data = await getWeatherData(city, units) //passing city and units variables to getWeatherData function
 
-      setWeather(data)
-      // background wallpaper change 
-      const threshold = units === 'metric' ? 20 : 60;
-      if (data.temp <= threshold) { setBg(coldbg) }
+      setWeather(data) // update weather state var with fetched data
+      // background wallpaper change. If its above 20c or 60f
+      const piece = units === 'metric' ? 20 : 60; // piece is value of units variable
+      if (data.temp <= piece) { setBg(coldbg) }
       else setBg(hotbg)
 
-      console.log(threshold);
+      console.log(piece); // log 
 
 
     }
-    fetchWeatherinfo()
+    fetchWeatherinfo() // call fetchWeatherinfo function
 
-  }, [units, city]); //city: when city changes (like user input) it fetches new data from api
+  }, [units, city]); // when city or units changes (user input or °C or °F btn) it fetches new data from api
   const handleUnitsClick = (e) => {
     const button = e.currentTarget;
     const currentUnit = button.innerText.slice(1);
@@ -51,20 +51,26 @@ function App() {
     setUnits(isCel ? "metric" : "imperial")
   }
   const enterKeyPressed = (e) => {
-    if (e.keyCode === 13) {
-      setCity(e.currentTarget.value)
-      e.currentTarget.blur() //getting rid of cursor after user insert city
+    if (e.keyCode === 13) { // check if enter key pressed 
+      setCity(e.currentTarget.value) // value in input field - changes city variable to it. 
+      e.currentTarget.blur() //getting rid of cursor after user insert city 
     }
 
   }
 
   function handleNavigation(page) {
-    setCurrentPage(page);
+    setCurrentPage(page); // changes current state of the page 
   }
 
 
 
-  // 2 Pages - weather
+  // This code block defines a navigation bar with two buttons - "weather" and "about". 
+  // When the user clicks on the "about" button, they are taken to a separate page that 
+  // provides a guide on what the website offe
+  // background image 
+  // About page will only render if currentpage equals to string about. 
+  // The expression before the && operator is evaluated first.
+
 
   return (
     <div className="app" style={{ backgroundImage: `url(${bg})` }}>
@@ -84,8 +90,8 @@ function App() {
           <div className="container">
             <div className="section">
               <div className="section section_inputs">
-                <input onKeyDown={enterKeyPressed} type="text" name="city" placeholder="Enter city name :" />
-                <button onClick={(e) => handleUnitsClick(e)}>°F</button>
+                <input onKeyDown={enterKeyPressed} type="text" className="red-placeholder" name="city" placeholder="Enter city name :" />
+                <button className="button-black" onClick={(e) => handleUnitsClick(e)}>°F</button>
               </div>
               <div className="section section_temp" >
                 <div className="icon">
@@ -101,7 +107,7 @@ function App() {
             <Descriptions weather={weather} units={units} />
           </div>
         )}
-        {currentPage === "about" && <AboutPage/>}
+        {currentPage === "about" && <AboutPage />} 
       </div>
     </div>
   );
